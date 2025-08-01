@@ -1,9 +1,8 @@
 # internal/handler/app_handler.py
-import os
 import dotenv
 
-from flask import request, jsonify, Response
-from internal.core.ollama_client import ollama_chat
+from flask import request, jsonify
+from internal.core.models.ollama_client import ollama_chat
 
 dotenv.load_dotenv()
 
@@ -29,4 +28,11 @@ class AppHandler:
 
         # 调用封装好的 Ollama 客户端
         reply = ollama_chat(prompt, model=model, host=self.host)
+        return jsonify({"reply": reply})
+
+    def chatDeepseek(self):
+        data = request.get_json() or {}
+        prompt = data.get("prompt", "")
+
+        reply = ollama_chat(prompt)
         return jsonify({"reply": reply})

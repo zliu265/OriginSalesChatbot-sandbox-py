@@ -22,5 +22,11 @@ class Router:
             methods=["POST"]
         )
 
+        bp.add_url_rule(
+            "/chat/deepseek",
+            view_func=self.app_handler.chat,
+            methods=["POST"]
+        )
+
 
         app.register_blueprint(bp)
