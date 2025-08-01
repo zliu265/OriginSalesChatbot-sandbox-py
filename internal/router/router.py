@@ -24,7 +24,7 @@ class Router:
 
         bp.add_url_rule(
             "/chat/deepseek",
-            view_func=self.app_handler.chat,
+            view_func=self.app_handler.chatDeepseek,
             methods=["POST"]
         )
 
