@@ -4,7 +4,6 @@ import requests
 
 def deepseek_chat(
     query: str,
-    prompt: str,
     model: str = "deepseek-chat",
     api_key: str | None = None,
     base_url: str = "https://api.deepseek.com/v1",
@@ -15,7 +14,6 @@ def deepseek_chat(
         raise ValueError("Deepseek API key is required")
 
     url = f"{base_url}/chat/completions"
-    prompt = "You are a helpful assistant."
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {api_key}",
@@ -23,10 +21,9 @@ def deepseek_chat(
     payload = {
         "model": model,
         "messages": [
-            {"role": "system", "content": prompt },
+            {"role": "system", "content": "You are a helpful assistant." },
             {"role": "user", "content": query}
-        ],
-        # "stream": false,
+        ]
     }
 
     response = requests.post(url, headers=headers, json=payload, timeout=10)
