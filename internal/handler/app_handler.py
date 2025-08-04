@@ -5,6 +5,7 @@ from flask import request, jsonify
 
 from internal.core.models import deepseek_chat
 from internal.core.models.ollama_client import ollama_chat
+from internal.schema.app_schema import CompletionReq
 
 dotenv.load_dotenv()
 
@@ -33,8 +34,9 @@ class AppHandler:
         return jsonify({"reply": reply})
 
     def chatDeepseek(self):
-        data = request.get_json() or {}
-        query = data.get("query", "")
+        req = CompletionReq()
+        if not req.validate():
+            return req.errors
 
-        reply = deepseek_chat(query)
+        reply = deepseek_chat(req.query.data)
         return jsonify({"reply": reply})
