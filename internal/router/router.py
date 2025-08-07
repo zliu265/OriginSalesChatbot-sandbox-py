@@ -15,6 +15,12 @@ class Router:
         # 原有的 /ping
         bp.add_url_rule("/ping", view_func=self.app_handler.ping)
 
+        bp.add_url_rule(
+            "/debug",
+            view_func=self.app_handler.debug,
+            methods=["POST"]
+        )
+
         # 新增的 /chat POST 路由
         bp.add_url_rule(
             "/chat",
