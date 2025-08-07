@@ -1,9 +1,12 @@
+import uuid
+
 import dotenv
 from dataclasses import dataclass
 from operator import itemgetter
 from typing import Any, Dict
 
 from flask import request, jsonify
+from injector import inject
 from langchain.memory import ConversationBufferWindowMemory
 from langchain_community.chat_message_histories import FileChatMessageHistory
 from langchain_community.chat_models import ChatOllama
@@ -16,16 +19,35 @@ from langchain_core.tracers import Run
 from internal.core.models import deepseek_chat
 from internal.core.models.ollama_client import ollama_chat
 from internal.schema.app_schema import CompletionReq
-from pkg.response import validata_error_json, success_json
+from internal.service import AppService
+from pkg.response import validata_error_json, success_json, success_message
 
 dotenv.load_dotenv()
 
+@inject
+@dataclass
 class AppHandler:
     """应用控制器"""
-    def __init__(self):
-        # 如果需要，可以把 host/model 改成从环境变量读
-        self.host = "http://127.0.0.1:11434"
-        self.model = "qwen3:8b"
+    app_service: AppService
+
+    def create_app(self):
+        """调用服务创建新的APP记录"""
+        app = self.app_service.create_app()
+        return success_message(f"应用已经成功创建，id为{app.id}")
+
+    def get_app(self, id: uuid.UUID):
+        app = self.app_service.get_app(id)
+        return success_message(f"应用已经成功获取，名称是{app.name}")
+
+    def update_app(self, id: uuid.UUID):
+        app = self.app_service.update_app(id)
+        return success_message(f"应用已经成功修改,修改的名字是{app.name}")
+
+    def delete_app(self, id: uuid.UUID):
+        app = self.app_service.delete_app(id)
+        return success_message(f"应用已经成功删除, id：{app.id}")
+
+
 
     def ping(self):
         return jsonify({"ping": "pong"})

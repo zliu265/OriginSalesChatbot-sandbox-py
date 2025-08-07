@@ -15,6 +15,11 @@ class Router:
         # 原有的 /ping
         bp.add_url_rule("/ping", view_func=self.app_handler.ping)
 
+        bp.add_url_rule("/app", methods=["POST"], view_func=self.app_handler.create_app)
+        bp.add_url_rule("/app/<uuid:id>", view_func=self.app_handler.get_app)
+        bp.add_url_rule("/app/<uuid:id>", methods=["POST"], view_func=self.app_handler.update_app)
+        bp.add_url_rule("/app/<uuid:id>/delete", methods=["POST"], view_func=self.app_handler.delete_app)
+
         bp.add_url_rule(
             "/debug",
             view_func=self.app_handler.debug,
