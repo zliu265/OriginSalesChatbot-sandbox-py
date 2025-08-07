@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 
 from config import Config
 from internal.exception import CustomException
@@ -11,12 +12,13 @@ from pkg.response import Response, json, HttpCode
 class Http(Flask):
     # Http服务引擎
     # args是不命名参数，kwargs是命名参数
-    def __init__(self, *args, conf: Config, router: Router, **kwargs):
+    def __init__(self, *args, conf: Config, db: SQLAlchemy, router: Router, **kwargs):
         super().__init__(*args, **kwargs)
         # 注册应用路由
-        router.register_router(self)
         self.config.from_object(conf)
         self.register_error_handler(Exception, self._register_error_handler)
+        db.init_app(self)
+        router.register_router(self)
 
     def _register_error_handler(self, error: Exception):
         # 1. 异常信息是不是我们的自定义异常，如果是可以提取message和code等信息
