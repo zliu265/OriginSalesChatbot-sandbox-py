@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+from pkg.sqlalchemy import SQLAlchemy
 
 from config import Config
 from internal.exception import CustomException

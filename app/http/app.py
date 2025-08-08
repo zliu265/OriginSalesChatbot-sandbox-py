@@ -1,5 +1,5 @@
 # app/http/app.py
-from flask_sqlalchemy import SQLAlchemy
+from pkg.sqlalchemy import SQLAlchemy
 from injector import Injector
 from internal.router.router import Router
 from internal.server.http import Http
