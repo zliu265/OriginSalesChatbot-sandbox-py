@@ -14,7 +14,14 @@ from pkg.response import Response, json, HttpCode
 class Http(Flask):
     # Http服务引擎
     # args是不命名参数，kwargs是命名参数
-    def __init__(self, *args, conf: Config, db: SQLAlchemy,migrate: Migrate, router: Router, **kwargs):
+    def __init__(self,
+                 *args,
+                 conf: Config,
+                 db: SQLAlchemy,
+                 migrate: Migrate,
+                 router: Router,
+                 **kwargs
+                 ):
         super().__init__(*args, **kwargs)
         # 注册应用路由
         self.config.from_object(conf)

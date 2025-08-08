@@ -14,7 +14,13 @@ conf = Config()
 
 dotenv.load_dotenv()
 
-app = Http(__name__,conf=conf,db=injector.get(SQLAlchemy),migrate=injector.get(Migrate), router=injector.get(Router))
+app = Http(
+    __name__,
+    conf=conf,
+    db=injector.get(SQLAlchemy),
+    migrate=injector.get(Migrate),
+    router=injector.get(Router)
+)
 
 if __name__ == "__main__":
     app.run(debug=True)
