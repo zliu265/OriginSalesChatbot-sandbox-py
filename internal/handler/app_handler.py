@@ -63,7 +63,7 @@ class AppHandler:
         if not query:
             errors["query"] = "不能为空"
         if errors:
-            return validate_error_json(errors)
+            return validata_error_json(errors)
 
         # conversation_id 可不传；传了要是合法 UUID
         conv_id = None
@@ -71,7 +71,7 @@ class AppHandler:
             try:
                 conv_id = uuid.UUID(conversation_id)
             except Exception:
-                return validate_error_json({"conversation_id": "非法 UUID"})
+                return validata_error_json({"conversation_id": "非法 UUID"})
 
         conversation, bot_msg = self.app_service.chat_once(
             app_id=app_id,

@@ -30,7 +30,7 @@ def fail_json(data: Any = None):
     return json(Response(code=HttpCode.FAIL, message="", data=data))
 
 
-def validata_error_json(errors: dict = None):
+def validate_error_json(errors: dict = None):
     """数据验证错误响应"""
     first_key = next(iter(errors))
     if first_key is not None:
