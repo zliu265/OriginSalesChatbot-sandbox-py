@@ -18,6 +18,7 @@ from langchain_core.tracers import Run
 
 from internal.core.models import deepseek_chat
 from internal.core.models.ollama_client import ollama_chat
+from internal.entity.conversation_entity import InvokeFrom
 from internal.schema.app_schema import CompletionReq
 from internal.service import AppService
 from pkg.response import validata_error_json, success_json, success_message
@@ -52,19 +53,43 @@ class AppHandler:
     def ping(self):
         return jsonify({"ping": "pong"})
 
-    def chat(self):
-        """
-        POST /chat
-        请求体 JSON: { "prompt": "...", "model": "可选" }
-        返回 JSON:  { "reply": "模型返回内容" }
-        """
-        data = request.get_json() or {}
-        prompt = data.get("prompt", "")
-        model  = data.get("model", self.model)
+    def chat(self, app_id: uuid.UUID):
+        """用户提问 -> LLM回答 -> 入库 -> 发送；支持复用/新建 conversation_id"""
+        data = request.get_json(silent=True) or {}
+        query = (data.get("query") or "").strip()
+        conversation_id = data.get("conversation_id")
 
-        # 调用封装好的 Ollama 客户端
-        reply = ollama_chat(prompt, model=model, host=self.host)
-        return jsonify({"reply": reply})
+        errors = {}
+        if not query:
+            errors["query"] = "不能为空"
+        if errors:
+            return validate_error_json(errors)
+
+        # conversation_id 可不传；传了要是合法 UUID
+        conv_id = None
+        if conversation_id:
+            try:
+                conv_id = uuid.UUID(conversation_id)
+            except Exception:
+                return validate_error_json({"conversation_id": "非法 UUID"})
+
+        conversation, bot_msg = self.app_service.chat_once(
+            app_id=app_id,
+            account=current_user,
+            query=query,
+            conversation_id=conv_id,
+            invoke_from=InvokeFrom.END_USER,
+        )
+
+        return success_json({
+            "conversation_id": str(conversation.id),
+            "message": {
+                "id": str(bot_msg.id),
+                "role": bot_msg.role,
+                "content": bot_msg.content,
+                "created_at": bot_msg.created_at.isoformat()
+            }
+        })
 
     def chatDeepseek(self):
         req = CompletionReq()

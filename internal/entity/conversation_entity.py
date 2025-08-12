@@ -28,3 +28,12 @@ class MessageStatus(str, Enum):
     NORMAL = "normal"  # 正常
     STOP = "stop"  # 停止
     ERROR = "error"  # 出错
+
+class InvokeFrom(str, Enum):
+    DEBUGGER = "debugger"   # 已有的调试态
+    END_USER = "end_user"   # 用户真实会话
+
+class Role(str, Enum):
+    USER = "user"
+    ASSISTANT = "assistant"
+    SYSTEM = "system"
