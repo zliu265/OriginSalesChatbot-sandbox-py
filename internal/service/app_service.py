@@ -19,17 +19,18 @@ class AppService:
     """应用服务逻辑"""
     db: SQLAlchemy
 
-    def create_app(self) -> App:
+    def create_app(self, name: str, description: str) -> App:
         with self.db.auto_commit():
             # 1.创建模型的实力类
             app = App(
-                name="测试机器人",
+                name=name,
                 account_id=uuid.uuid4(),
                 icon="",
-                description="这是一个简单的聊天机器人"
+                description=description
             )
             # 2.将实体类添加到session会话中
             self.db.session.add(app)
+            self.db.session.flush()
         return app
 
     def get_app(self, id: uuid.UUID) -> App:
@@ -61,7 +62,7 @@ class AppService:
         # 2) 读取配置（优先已发布；否则用草稿配置）
         # 如果你有 self.get_app_config 可用，优先使用；这里兜底到草稿
         cfg_version: AppConfigVersion = app.draft_app_config
-        cfg = getattr(cfg_version, "model_config", None) or DEFAULT_APP_CONFIG["model_config"]
+        cfg = getattr(cfg_version, "model_config", None)
         dialog_round = getattr(cfg_version, "dialog_round", 3) or 3
         preset_prompt = getattr(cfg_version, "preset_prompt", "") or ""
 
@@ -148,17 +149,17 @@ class AppService:
         top_p = params.get("top_p", 0.85)
         max_tokens = params.get("max_tokens", 8192)
 
-        if provider == "openai":
-            # 读取 OPENAI_API_KEY from env
-            client = OpenAI()
-            resp = client.chat.completions.create(
-                model=model,
-                messages=messages,
-                temperature=temperature,
-                top_p=top_p,
-                max_tokens=max_tokens,
-            )
-            return resp.choices[0].message.content or ""
+        # if provider == "openai":
+        #     # 读取 OPENAI_API_KEY from env
+        #     client = OpenAI()
+        #     resp = client.chat.completions.create(
+        #         model=model,
+        #         messages=messages,
+        #         temperature=temperature,
+        #         top_p=top_p,
+        #         max_tokens=max_tokens,
+        #     )
+        #     return resp.choices[0].message.content or ""
 
         if provider == "ollama":
             # 默认本地 Ollama 服务

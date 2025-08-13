@@ -26,11 +26,11 @@ class Router:
             view_func=self.app_handler.chat
         )
 
-        bp.add_url_rule(
-            "/debug",
-            view_func=self.app_handler.debug,
-            methods=["POST"]
-        )
+        # bp.add_url_rule(
+        #     "/debug",
+        #     view_func=self.app_handler.debug,
+        #     methods=["POST"]
+        # )
 
         # 新增的 /chat POST 路由
         bp.add_url_rule(
