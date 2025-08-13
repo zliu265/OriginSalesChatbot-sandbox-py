@@ -28,9 +28,7 @@ class Http(Flask):
         self.register_error_handler(Exception, self._register_error_handler)
         db.init_app(self)
         migrate.init_app(self, db, directory="internal/migration")
-        # with self.app_context():
-        #     _ = App()
-        #     db.create_all()
+
         router.register_router(self)
 
     def _register_error_handler(self, error: Exception):
